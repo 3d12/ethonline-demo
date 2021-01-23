@@ -4,7 +4,7 @@ import ButtonArea from '../ButtonArea/ButtonArea'
 import ScrubberArea from '../ScrubberArea/ScrubberArea'
 //import { Scrubber, Button } from '@audius/stems'
 
-import './HttpApiExample.css'
+import './BottomPlayer.css'
 
 /* This list is a list of handles of accounts that:
  		* Mostly upload copyrighted or otherwise not-their-own work
@@ -38,7 +38,7 @@ const selectHost = async () => {
 	return sample(hosts.data)
 }
 
-const HttpApiExample = () => {
+const BottomPlayer = () => {
 	const [tracks, setTracks] = useState(null);
 	const [allTracks, setAllTracks] = useState(null);
 	const [genre, setGenre] = useState(null);
@@ -136,10 +136,11 @@ const HttpApiExample = () => {
 
 
 	return tracks && (
-		<div className="topTracks">
+		<div className="BottomPlayerTop">
 		<ScrubberArea playingAudio={playingAudio} playingTrack={playingTrack} elapsedTime={elapsedTime} />
 		<br />
 		<ButtonArea genreHandler={setGenre} moodHandler={setMood} rangeHandler={setRange} />
+		<div className="topTracks">
 		<h1>{(range ? range : "Day") + " - " + (genre === "" ? "No Genre" : genre ? genre : "All Genres") + " - " + (mood === "" ? "No Mood" : mood ? mood : "All Moods")}</h1>
 		<ul>
 		{tracks.map((track) => {
@@ -149,8 +150,9 @@ const HttpApiExample = () => {
 		})}
 		</ul>
 		</div>
+		</div>
 	);
 }
 
 
-export default HttpApiExample
+export default BottomPlayer
