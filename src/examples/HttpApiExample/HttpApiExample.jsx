@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Hashids from 'hashids/cjs'
 import ButtonArea from '../ButtonArea/ButtonArea'
+import Scrubber from '@audius/stems'
 
 import './HttpApiExample.css'
 
@@ -125,6 +126,7 @@ const HttpApiExample = () => {
 
 	return tracks && (
 		<div className="topTracks">
+		<Scrubber />
 		<ButtonArea genreHandler={setGenre} moodHandler={setMood} rangeHandler={setRange} />
 		<h1>{(range ? range : "Day") + " - " + (genre === "" ? "No Genre" : genre ? genre : "All Genres") + " - " + (mood === "" ? "No Mood" : mood ? mood : "All Moods")}</h1>
 		<ul>
