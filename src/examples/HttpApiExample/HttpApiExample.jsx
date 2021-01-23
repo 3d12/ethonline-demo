@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Hashids from 'hashids/cjs'
 import ButtonArea from '../ButtonArea/ButtonArea'
-import Scrubber from '@audius/stems'
+import ScrubberArea from '../ScrubberArea/ScrubberArea'
+//import { Scrubber, Button } from '@audius/stems'
 
 import './HttpApiExample.css'
 
@@ -46,6 +47,8 @@ const HttpApiExample = () => {
 	const [playingTrack, setPlayingTrack] = useState(null);
 	const [playingAudio, setPlayingAudio] = useState(null);
 	const [range, setRange] = useState(null);
+	const [elapsedTime, setElapsedTime] = useState(null);
+	const [playingSecondsPoll, setPlayingSecondsPoll] = useState(null);
 
 	useEffect(() => {
 		const fetchTracks = async () => {
@@ -73,6 +76,9 @@ const HttpApiExample = () => {
 			playingAudio.pause();
 			playingAudio.currentTime = 0;
 			setPlayingAudio(null);
+			setElapsedTime(null);
+			clearInterval(playingSecondsPoll);
+			setPlayingSecondsPoll(null);
 			if (playingTrack.id !== track.id) {
 				console.log("Starting track...");
 				playTrack(track);
@@ -92,6 +98,10 @@ const HttpApiExample = () => {
 		if (audio) {
 			setPlayingAudio(audio);
 			audio.play();
+			setPlayingSecondsPoll(setInterval(() => { 
+				const newTime = audio.currentTime;
+				setElapsedTime(newTime);
+			},200));
 		}
 	};
 
@@ -124,9 +134,11 @@ const HttpApiExample = () => {
 		}
 	}, [mood, allTracks]);
 
+
 	return tracks && (
 		<div className="topTracks">
-		<Scrubber />
+		<ScrubberArea playingAudio={playingAudio} playingTrack={playingTrack} elapsedTime={elapsedTime} />
+		<br />
 		<ButtonArea genreHandler={setGenre} moodHandler={setMood} rangeHandler={setRange} />
 		<h1>{(range ? range : "Day") + " - " + (genre === "" ? "No Genre" : genre ? genre : "All Genres") + " - " + (mood === "" ? "No Mood" : mood ? mood : "All Moods")}</h1>
 		<ul>

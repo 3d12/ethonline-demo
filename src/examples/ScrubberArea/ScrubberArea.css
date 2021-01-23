@@ -1,0 +1,29 @@
+.artwork img {
+  overflow: hidden;
+  border-radius: 5px;
+  height: 50px;
+  width: 50px;
+  float: left;
+}
+
+.trackListing {
+  height: 50px;
+  line-height: 20px;
+  vertical-align: middle;
+  font-size: 12px;
+  text-align: left;
+  margin: auto;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.artist {
+  font-size: 20px;
+}
+
+.host {
+  font-size: 8px;
+}
