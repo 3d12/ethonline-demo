@@ -94,6 +94,8 @@ const HttpApiExample = () => {
 		}
 	};
 
+	// Genre handler, will trigger a re-fetch since the fetchTracks handler
+	//	watches for genre to change as well
 	useEffect(() => {
 		if (allTracks) {
 			setMood(null);
@@ -101,12 +103,26 @@ const HttpApiExample = () => {
 				.filter((track) => { return !['test_tube','test_centre','test_subject','test_ing'].includes(track.user.handle) }) // filtering out kick copy tracks
 				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out users that repost other people's tracks
 				.filter((track) => { return (genre !== null ? track.genre === null ? "" === genre : track.genre === genre : true) }) // genre filter
+				.sort((a,b) => { return b.play_count - a.play_count }) // descending
+				.slice(0,10)) // top 10
+			;
+		}
+	}, [genre, allTracks]);
+
+	// Mood handler, will not trigger a re-fetch since fetchTracks is not
+	//	watching this field
+	useEffect(() => {
+		if (allTracks) {
+			setMood(null);
+			setTracks(allTracks
+				.filter((track) => { return !['test_tube','test_centre','test_subject','test_ing'].includes(track.user.handle) }) // filtering out kick copy tracks
+				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out users that repost other people's tracks
 				.filter((track) => { return (mood !== null ? track.mood === null ? "" === mood : track.mood === mood : true) }) // mood filter
 				.sort((a,b) => { return b.play_count - a.play_count }) // descending
 				.slice(0,10)) // top 10
 			;
 		}
-	}, [genre, mood, allTracks]);
+	}, [mood, allTracks]);
 
 	return tracks && (
 		<div className="topTracks">
