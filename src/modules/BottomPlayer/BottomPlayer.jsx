@@ -32,6 +32,8 @@ const scammer_handles = [
 	'test_subject','test_ing'
 ];
 
+/* This function selects a random host (discovery provider) from the list
+  	available at api.audius.co */
 const selectHost = async () => {
 	const sample = (arr) => arr[Math.floor(Math.random() * arr.length)]
 	const res = await fetch('https://api.audius.co')
@@ -39,6 +41,7 @@ const selectHost = async () => {
 	return sample(hosts.data)
 }
 
+/* Player component */
 const BottomPlayer = () => {
 	const [tracks, setTracks] = useState(null);
 	const [allTracks, setAllTracks] = useState(null);
@@ -50,30 +53,54 @@ const BottomPlayer = () => {
 	const [range, setRange] = useState(null);
 	const [elapsedTime, setElapsedTime] = useState(null);
 	const [playingSecondsPoll, setPlayingSecondsPoll] = useState(null);
+	const [user, setUser] = useState(null);
+	const [userName, setUserName] = useState(null);
+	const [trackVolume, setTrackVolume] = useState(null);
 
+	/* This effect watches genre and range, and will resubmit the query on either
+	  	field changing */
 	useEffect(() => {
 		const fetchTracks = async () => {
 			const selectedHost = await selectHost();
 			const res = await fetch(`${selectedHost}/v1/tracks/trending?time={range ? range : "Day"}&genre=${genre ? genre : ""}`);
 			const json = await res.json();
-			console.log("Host: " + selectedHost);
-			console.log(json);
 			setHost(selectedHost);
+			setUser(null);
 			setAllTracks(json.data);
-			console.log("Done with fetchTracks");
 		};
 		fetchTracks();
 	}, [genre, range]);
 
+	/* This effect watches for the user to change, and will fetch just that user's
+	  	tracks */
+	useEffect(() => {
+		const fetchTracks = async () => {
+			const selectedHost = await selectHost();
+			const res1 = await fetch(`${selectedHost}/v1/users/${user}`);
+			const json1 = await res1.json();
+			setUserName(json1.data.name);
+			const res = await fetch(`${selectedHost}/v1/users/${user}/tracks`);
+			const json = await res.json();
+			setHost(selectedHost);
+			setAllTracks(json.data);
+		};
+		if (user) {
+			fetchTracks();
+		}
+	}, [user]);
+
+	/* Helper function to turn hash IDs into database numbers, for
+	  	converting track IDs (and names) into URLs */
 	const decodeHashId = (id) => {
 		const hashids = new Hashids('azowernasdfoia', 5);
 		return hashids.decode(id);
 	}
 
+	/* Main onClick event for the track artwork, will perform necessary
+	  	cleanup on already-playing audio before starting new audio,
+	  	or pause if clicked audio is the same as playing audio */
 	const trackClicked = (track) => {
-		console.log("ID clicked is " + track.id);
 		if (playingAudio) {
-			console.log("Pausing...");
 			playingAudio.pause();
 			playingAudio.currentTime = 0;
 			setPlayingAudio(null);
@@ -81,23 +108,25 @@ const BottomPlayer = () => {
 			clearInterval(playingSecondsPoll);
 			setPlayingSecondsPoll(null);
 			if (playingTrack.id !== track.id) {
-				console.log("Starting track...");
 				playTrack(track);
 			}
 		} else {
-			console.log("Starting track...");
 			playTrack(track);
 		}
 	};
 
+	/* playTrack function was split out so we would have a layer of
+	 	control over the setPlayingTrack function. When that
+		was happening in the onClick, it was leading to
+		infinite loops because of the useEffect hooks */
 	const playTrack = (track) => {
-		console.log("Playing track " + track.id + "...");
 		setPlayingTrack(track);
 		const id = track.id;
 		const streamUrl = `${host}/v1/tracks/${id}/stream`
 		const audio = new Audio(streamUrl);
 		if (audio) {
 			setPlayingAudio(audio);
+			audio.volume = (trackVolume ? trackVolume : 1);
 			audio.play();
 			setPlayingSecondsPoll(setInterval(() => {
 				const newTime = audio.currentTime;
@@ -109,7 +138,9 @@ const BottomPlayer = () => {
 	// Genre handler, will trigger a re-fetch since the fetchTracks handler
 	//	watches for genre to change as well
 	useEffect(() => {
-		if (allTracks) {
+		// Excluding user here, because we don't want this filtering to occur
+		// 	if a user is selected
+		if (allTracks && !user) {
 			setMood(null);
 			setTracks(allTracks
 				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out scammers
@@ -118,7 +149,7 @@ const BottomPlayer = () => {
 				.slice(0,10)) // top 10
 			;
 		}
-	}, [genre, allTracks]);
+	}, [genre, allTracks, user]);
 
 	// Mood handler, will not trigger a re-fetch since fetchTracks is not
 	//	watching this field
@@ -133,14 +164,38 @@ const BottomPlayer = () => {
 		}
 	}, [mood, allTracks]);
 
+	// User handler, will not trigger a re-fetch since fetchTracks is not
+	//	watching this field
+	useEffect(() => {
+		if (allTracks && user) {
+			setTracks(allTracks
+				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out scammers
+				.sort((a,b) => { return b.play_count - a.play_count }) // descending
+				.slice(0,10)) // top 10
+			;
+		}
+	}, [user, allTracks]);
 
+	// Lazy onClick handler for the Bottom Face link, could use this to
+	// 	fetch any other userID and display their tracks
+	const showBottomFaceTracks = (e) => {
+		if (e) {
+			e.preventDefault();
+		}
+		setUser("D2x3p");
+	};
+
+
+	// Returned component for rendering
 	return tracks && (
 		<div className="BottomPlayerTop">
-		<ScrubberArea playingAudio={playingAudio} playingTrack={playingTrack} elapsedTime={elapsedTime} />
+		<h1>BottomPlayer</h1>
+		<p>An Audius API player focused on supporting independent artists! Made with ♥ by <a href="#" onClick={() => showBottomFaceTracks()}>Bottom Face</a> in 2021.</p>
+		<ScrubberArea playingAudio={playingAudio} playingTrack={playingTrack} elapsedTime={elapsedTime} setTrackVolume={setTrackVolume} trackVolume={trackVolume} />
 		<br />
 		<ButtonArea genreHandler={setGenre} moodHandler={setMood} rangeHandler={setRange} />
 		<div className="topTracks">
-		<h1>{(range ? range : "Day") + " - " + (genre === "" ? "No Genre" : genre ? genre : "All Genres") + " - " + (mood === "" ? "No Mood" : mood ? mood : "All Moods")}</h1>
+		<h1>{!user ? range ? range + " - " : "Day - " : null}{user ? userName + "'s Tracks" : genre === "" ? "No Genre" : genre ? genre : "All Genres"} - {mood === "" ? "No Mood" : mood ? mood : "All Moods"}</h1>
 		<ul>
 		{tracks.map((track) => {
 			return (

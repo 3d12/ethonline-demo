@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Scrubber, Button } from '@audius/stems'
 
 import './ScrubberArea.css'
 
 const ScrubberArea = (props) => {
-	const [trackVolume, setTrackVolume] = useState(null);
 
 	const volumeSet = (seconds) => {
 		const volumeFloat = seconds/100.0;
-		setTrackVolume(volumeFloat);
+		props.setTrackVolume(volumeFloat);
 		if (props.playingAudio && !props.playingAudio.paused) {
 			props.playingAudio.volume = volumeFloat;
 		}
@@ -19,7 +18,7 @@ const ScrubberArea = (props) => {
 			if (!props.playingAudio.paused) {
 				props.playingAudio.pause();
 			} else {
-				props.playingAudio.volume = (trackVolume ? trackVolume : 0);
+				props.playingAudio.volume = (props.trackVolume ? props.trackVolume : 1);
 				props.playingAudio.play();
 			}
 		}
@@ -40,7 +39,7 @@ const ScrubberArea = (props) => {
 		<Scrubber
 			mediaKey={props.playingTrack ? props.playingTrack.id : null}
 			includeTimestamps={false}
-			elapsedSeconds='100'
+			elapsedSeconds={props.playingAudio ? props.playingAudio.volume * 100 : 100}
 			totalSeconds='100'
 			isPlaying={false}
 			onScrub={(seconds) => (props.playingAudio ? volumeSet(seconds) : null)}
