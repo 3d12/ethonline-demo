@@ -57,12 +57,16 @@ const BottomPlayer = () => {
 	const [userName, setUserName] = useState(null);
 	const [trackVolume, setTrackVolume] = useState(null);
 
+	useEffect(() => {
+		document.title = "BottomPlayer";
+	});
+
 	/* This effect watches genre and range, and will resubmit the query on either
 	  	field changing */
 	useEffect(() => {
 		const fetchTracks = async () => {
 			const selectedHost = await selectHost();
-			const res = await fetch(`${selectedHost}/v1/tracks/trending?time={range ? range : "Day"}&genre=${genre ? genre : ""}`);
+			const res = await fetch(`${selectedHost}/v1/tracks/trending?time={range ? range : "Day"}&genre=${genre ? genre : ""}&app_name=BottomPlayerv1`);
 			const json = await res.json();
 			setHost(selectedHost);
 			setUser(null);
@@ -76,10 +80,10 @@ const BottomPlayer = () => {
 	useEffect(() => {
 		const fetchTracks = async () => {
 			const selectedHost = await selectHost();
-			const res1 = await fetch(`${selectedHost}/v1/users/${user}`);
+			const res1 = await fetch(`${selectedHost}/v1/users/${user}?app_name=BottomPlayerv1`);
 			const json1 = await res1.json();
 			setUserName(json1.data.name);
-			const res = await fetch(`${selectedHost}/v1/users/${user}/tracks`);
+			const res = await fetch(`${selectedHost}/v1/users/${user}/tracks?app_name=BottomPlayerv1`);
 			const json = await res.json();
 			setHost(selectedHost);
 			setAllTracks(json.data);
@@ -122,7 +126,7 @@ const BottomPlayer = () => {
 	const playTrack = (track) => {
 		setPlayingTrack(track);
 		const id = track.id;
-		const streamUrl = `${host}/v1/tracks/${id}/stream`
+		const streamUrl = `${host}/v1/tracks/${id}/stream?app_name=BottomPlayerv1`
 		const audio = new Audio(streamUrl);
 		if (audio) {
 			setPlayingAudio(audio);
@@ -190,7 +194,7 @@ const BottomPlayer = () => {
 	return tracks && (
 		<div className="BottomPlayerTop">
 		<h1>BottomPlayer</h1>
-		<p>An Audius API player focused on supporting independent artists! Made with ♥ by <a href="#" onClick={() => showBottomFaceTracks()}>Bottom Face</a> in 2021.</p>
+		<p>An Audius API player focused on supporting independent artists! Made with ♥ by <a href="#!" onClick={() => showBottomFaceTracks()}>Bottom Face</a> in 2021.</p>
 		<ScrubberArea playingAudio={playingAudio} playingTrack={playingTrack} elapsedTime={elapsedTime} setTrackVolume={setTrackVolume} trackVolume={trackVolume} />
 		<br />
 		<ButtonArea genreHandler={setGenre} moodHandler={setMood} rangeHandler={setRange} />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Scrubber, Button } from '@audius/stems'
 
 import './ScrubberArea.css'
