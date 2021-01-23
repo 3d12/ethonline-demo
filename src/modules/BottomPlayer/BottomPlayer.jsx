@@ -28,7 +28,7 @@ const scammer_handles = [
 	'ahmad_osman2016','findbuzz','Marcosrippel','afrobeatz','getter','portaljbmusik',
 	'therealNemani','Sky_net','Johneri22328619','maven_','Aps17','JL711','vidal_news',
 	'YoYoPink','only11','DaSlickstanator','kaem_e','espiritismo','omurokur','Dastan',
-	'oliveirajoaquim','RajeshRamdevRam','smolbean','frizman''test_tube','test_centre',
+	'oliveirajoaquim','RajeshRamdevRam','smolbean','frizman','test_tube','test_centre',
 	'test_subject','test_ing'
 ];
 
