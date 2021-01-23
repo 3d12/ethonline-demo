@@ -28,7 +28,8 @@ const scammer_handles = [
 	'ahmad_osman2016','findbuzz','Marcosrippel','afrobeatz','getter','portaljbmusik',
 	'therealNemani','Sky_net','Johneri22328619','maven_','Aps17','JL711','vidal_news',
 	'YoYoPink','only11','DaSlickstanator','kaem_e','espiritismo','omurokur','Dastan',
-	'oliveirajoaquim','RajeshRamdevRam','smolbean','frizman'
+	'oliveirajoaquim','RajeshRamdevRam','smolbean','frizman''test_tube','test_centre',
+	'test_subject','test_ing'
 ];
 
 const selectHost = async () => {
@@ -98,7 +99,7 @@ const BottomPlayer = () => {
 		if (audio) {
 			setPlayingAudio(audio);
 			audio.play();
-			setPlayingSecondsPoll(setInterval(() => { 
+			setPlayingSecondsPoll(setInterval(() => {
 				const newTime = audio.currentTime;
 				setElapsedTime(newTime);
 			},200));
@@ -111,8 +112,7 @@ const BottomPlayer = () => {
 		if (allTracks) {
 			setMood(null);
 			setTracks(allTracks
-				.filter((track) => { return !['test_tube','test_centre','test_subject','test_ing'].includes(track.user.handle) }) // filtering out kick copy tracks
-				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out users that repost other people's tracks
+				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out scammers
 				.filter((track) => { return (genre !== null ? track.genre === null ? "" === genre : track.genre === genre : true) }) // genre filter
 				.sort((a,b) => { return b.play_count - a.play_count }) // descending
 				.slice(0,10)) // top 10
@@ -125,8 +125,7 @@ const BottomPlayer = () => {
 	useEffect(() => {
 		if (allTracks) {
 			setTracks(allTracks
-				.filter((track) => { return !['test_tube','test_centre','test_subject','test_ing'].includes(track.user.handle) }) // filtering out kick copy tracks
-				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out users that repost other people's tracks
+				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out scammers
 				.filter((track) => { return (mood !== null ? track.mood === null ? "" === mood : track.mood === mood : true) }) // mood filter
 				.sort((a,b) => { return b.play_count - a.play_count }) // descending
 				.slice(0,10)) // top 10
