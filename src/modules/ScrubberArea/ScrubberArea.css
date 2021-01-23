@@ -1,29 +1,23 @@
-.artwork img {
-  overflow: hidden;
-  border-radius: 5px;
-  height: 50px;
-  width: 50px;
-  float: left;
+.scrubberArea {
+	display: flex;
+	justify-content: space-between;
 }
 
-.trackListing {
-  height: 50px;
-  line-height: 20px;
-  vertical-align: middle;
-  font-size: 12px;
-  text-align: left;
-  margin: auto;
-}
-
-.title {
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.artist {
-  font-size: 20px;
-}
-
-.host {
+.volumeTitle {
   font-size: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.volumeScrubber {
+	display: flex;
+	/*align-items: center;*/
+	justify-content: flex-end;
+	margin-left: auto;
+	flex-direction: column;
+	/*align-content: space-between;*/
+	/*float: right;*/
+	width: 25%;
+	height: 20px;
+	padding: 10px;
 }
