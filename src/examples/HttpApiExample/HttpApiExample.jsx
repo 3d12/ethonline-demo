@@ -4,7 +4,30 @@ import ButtonArea from '../ButtonArea/ButtonArea'
 
 import './HttpApiExample.css'
 
-/** HTTP API Example */
+/* This list is a list of handles of accounts that:
+ 		* Mostly upload copyrighted or otherwise not-their-own work
+		* Are not who they seem to be (celebrity impersonator accounts)
+		* Otherwise do not belong (perverts in the kids section)
+	If you've been included in this list and feel this is in error,
+	please open an issue or PR in this repo and explain why. */
+const scammer_handles = [
+	'1990','soudogd','Duyenlina22','Thongtrandalat','cryptoace','RoadtoBitcoin','FirasDhouibi',
+	'canalpay','Lonly_kid','nickname02','elsat','maimaibenanhem','2020airdrop1','staytruelorjiggy',
+	'maimaibenanh1','hoainguyen21','Hot','Duyenlina','Therlbread','rwota','Tonime2','Dalat',
+	'Andrezitol1','Sangking','Bentopro','Duyen22','TheMisir','bduda0','billie_eilish',
+	'draynicolas1','kopimi','uploads','redo','HipHop247','CyberNukeEdits','OnyxHD',
+	'Celosity','OmarEstrada1987','melly','xxxxtentacion','Electric_Hawk','nosteps',
+	'demetro_news','trader_keci','Suykast','Ianqaz','mhamedabdelmou1','toptracks','rapleaks',
+	'MagSun','xiaoxing2207','Nimos','justinbeiber','TheHighGround','EloniousVancity',
+	'itsthomasaman','Tiwing','rones_lira','assis_anastacio','poseidon909','Iamdooboy',
+	'driftabeatz','ichihashi08','h22061995','Gadonttv','bruhtomen1337','Sobs4Crypto',
+	'hoainguyen22','BernardFety','sararey90353942','rggomes','CleanEdits','JoelmyB',
+	'sonsdeafrica','Cyberthebaby','KayRemix','drmib','hoaido0205','paulos',
+	'ahmad_osman2016','findbuzz','Marcosrippel','afrobeatz','getter','portaljbmusik',
+	'therealNemani','Sky_net','Johneri22328619','maven_','Aps17','JL711','vidal_news',
+	'YoYoPink','only11','DaSlickstanator','kaem_e','espiritismo','omurokur','Dastan',
+	'oliveirajoaquim','RajeshRamdevRam','smolbean'
+];
 
 const selectHost = async () => {
 	const sample = (arr) => arr[Math.floor(Math.random() * arr.length)]
@@ -76,23 +99,14 @@ const HttpApiExample = () => {
 			setMood(null);
 			setTracks(allTracks
 				.filter((track) => { return !['test_tube','test_centre','test_subject','test_ing'].includes(track.user.handle) }) // filtering out kick copy tracks
+				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out users that repost other people's tracks
 				.filter((track) => { return (genre !== null ? track.genre === null ? "" === genre : track.genre === genre : true) }) // genre filter
+				.filter((track) => { return (mood !== null ? track.mood === null ? "" === mood : track.mood === mood : true) }) // mood filter
 				.sort((a,b) => { return b.play_count - a.play_count }) // descending
 				.slice(0,10)) // top 10
 			;
 		}
-	}, [genre, allTracks]);
-
-	useEffect(() => {
-		if (allTracks) {
-			setTracks(allTracks
-				.filter((track) => { return !['test_tube','test_centre','test_subject','test_ing'].includes(track.user.handle) }) // filtering out kick copy tracks
-				.filter((track) => { return (mood !== null ? track.mood === null ? "" === mood : track.mood === mood : true) }) // genre filter
-				.sort((a,b) => { return b.play_count - a.play_count }) // descending
-				.slice(0,10)) // top 10
-			;
-		}
-	}, [mood, allTracks]);
+	}, [genre, mood, allTracks]);
 
 	return tracks && (
 		<div className="topTracks">
@@ -101,7 +115,7 @@ const HttpApiExample = () => {
 		<ul>
 		{tracks.map((track) => {
 			return (
-				<li key={track.id}><div className="trackListing"><div className="artwork"><img onClick={() => trackClicked(track)} src={track.artwork['150x150']} alt='artwork'/></div><p> <a href={'http://audius.co/'+track.user.handle+'/'}>{track.user.name}</a> - <a href={'http://audius.co/'+track.user.handle+'/'+encodeURIComponent(track.title.replace(/ /g, '-'))+'-'+decodeHashId(track.id)+'/'}>{track.title}</a> ({track.play_count})</p></div></li>
+				<li key={track.id}><div className="trackListing"><div className="artwork"><img onClick={() => trackClicked(track)} src={track.artwork['150x150']} alt='artwork'/></div><p> <a href={'http://audius.co/'+track.user.handle+'/'}>{track.user.name ? track.user.name : track.user.handle}</a> - <a href={'http://audius.co/'+track.user.handle+'/'+encodeURIComponent(track.title.replace(/ /g, '-'))+'-'+decodeHashId(track.id)+'/'}>{track.title}</a> ({track.play_count})</p></div></li>
 			);
 		})}
 		</ul>
