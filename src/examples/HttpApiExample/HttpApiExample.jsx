@@ -113,7 +113,6 @@ const HttpApiExample = () => {
 	//	watching this field
 	useEffect(() => {
 		if (allTracks) {
-			setMood(null);
 			setTracks(allTracks
 				.filter((track) => { return !['test_tube','test_centre','test_subject','test_ing'].includes(track.user.handle) }) // filtering out kick copy tracks
 				.filter((track) => { return !scammer_handles.includes(track.user.handle) }) // filtering out users that repost other people's tracks
